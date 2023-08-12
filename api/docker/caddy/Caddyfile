@@ -3,8 +3,8 @@
     {$CADDY_DEBUG}
 }
 
-{$SERVER_NAME}
-
+# {$SERVER_NAME}
+localhost
 log
 
 # Matches requests for HTML documents, for static files and for Next.js files,
