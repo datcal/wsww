@@ -2,10 +2,13 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
 use App\Repository\GameParticipantRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: GameParticipantRepository::class)]
+#[ApiResource]
 class GameParticipant
 {
     #[ORM\Id]
@@ -13,12 +16,13 @@ class GameParticipant
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(inversedBy: 'gameParticipants')]
+    #[ORM\ManyToOne(cascade: ['persist'], inversedBy: 'gameParticipants')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Game $game = null;
 
     #[ORM\ManyToOne(inversedBy: 'gameParticipants')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups('game')]
     private ?Player $player = null;
 
     public function getId(): ?int

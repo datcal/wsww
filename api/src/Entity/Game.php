@@ -2,42 +2,48 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Metadata\Get;
-use ApiPlatform\Metadata\Post;
-use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Post;
+use App\Action\CreateGameAction;
+use App\Controller\GameController;
 use App\Repository\GameRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use App\Controller\GameController;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: GameRepository::class)]
 #[ApiResource(
     operations:
         [
             new Get(),
-            new Get(name: 'join', uriTemplate: '/games/{id}/join', controller: GameController::class),
-            new Post(),
+            new Get(uriTemplate: '/games/{id}/join', controller: GameController::class, name: 'join'),
+            new Post(controller: CreateGameAction::class, name: 'create'),
             new Delete(),
             new GetCollection()
-        ]
+        ],
+    normalizationContext: ['groups' => ['game']]
 )]
 class Game
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups('game')]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups('game')]
     private ?string $name = null;
 
     #[ORM\Column]
     private ?\DateTimeImmutable $create_at = null;
 
     #[ORM\OneToMany(mappedBy: 'game', targetEntity: GameParticipant::class)]
+    #[Groups('game')]
     private Collection $gameParticipants;
 
     public function __construct()
